@@ -6,70 +6,66 @@ import java.io.File;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class star {
-
     public static BufferedImage img;
     public static int width = 1920;
     public static int height = 1080;
+    public static doublyLinkedList dll = new doublyLinkedList();
 
     public static void main(String[] args) {
+        try {
         img = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
+        reset();
         Graphics2D graphics = img.createGraphics();
+        graphics.setPaint ( Color.white );
+        graphics.fillRect ( 0, 0, img.getWidth(), img.getHeight() );
 
 
         // number of vertices
         int n = 6;
         // number of threads
-        // Integer.parseInt(args[0]);
-        int m;
+        int m = Integer.parseInt(args[0]);
+        // check for m < n
+        if (m > n){
+            throw new IllegalArgumentException("Invalid m");
+        }
         // number of repetitions
-        // Integer.parseInt(args[1]);
-        int c;
-        // temporarily set C as 2
-        c = 1;
+        int c = Integer.parseInt(args[1]);
+        // check for c > 0
+        if (c < 0){
+            throw new IllegalArgumentException("Invalid c");
+        }
 
         // to store coordinates
-        double[] x_vals = new double[6];
-        double[] y_vals = new double[6];
         int[] x_vals1 = new int[6];
         int[] y_vals1 = new int[6];
 
-        //System.out.println(n);
-        doublyLinkedList dll = new doublyLinkedList();
         dll.addFront(-1.0, 5.0);
         dll.addBack(1.0, 2.0);
         dll.addBack(5.0, 0.0);
         dll.addBack(1.0, -2.0);
-        dll.addBack(-4.0, 4.0);
+        dll.addBack(-4.0, -4.0);
         dll.addBack(-3.0, 1.0);
-        //dll.iterateForward();
 
-        // going through the repetitions
-        for(int i = 0 ; i < c ; i++) {
-            int vertice_index = ThreadLocalRandom.current().nextInt(1, 7);
-            dll.updateNode(vertice_index);
-
-            System.out.println(vertice_index);
+        Thread[] threads = new Thread[m];
+        for(int i = 0 ; i < m; i++){
+            threads[i] = modThread(c);
+            threads[i].start();
         }
-        dll.iterateForward(x_vals, y_vals);
-
-
+        for(int i = 0 ; i < m; i++){
+            threads[i].join();
+        }
+        dll.iterateForward(x_vals1, y_vals1);
         Polygon p = new Polygon(x_vals1, y_vals1,6);
         graphics.setColor(Color.blue);
         graphics.drawPolygon(p);
         graphics.dispose();
-
-
-        try {
-            File outputfile = new File("outputimage.png");
-            ImageIO.write(img, "png", outputfile);
+        File outputfile = new File("outputimage.png");
+        ImageIO.write(img, "png", outputfile);
         }
         catch (Exception e) {
             System.out.println("Error: " +e);
             e.printStackTrace();
         }
-
-
-
     }
     public static void reset() {
         for (int i=0;i<width;i++) {
@@ -77,5 +73,31 @@ public class star {
                 img.setRGB(i,j,0);
             }
         }
+    }
+    public void update(int c, doublyLinkedList d){
+        int i = 0;
+        while(i < c) {
+            int vertice_index = ThreadLocalRandom.current().nextInt(1, 7);
+            d.updateNode(vertice_index);
+            i++;
+        }
+
+    }
+    public static Thread modThread(final int c) {
+        return new Thread(new Runnable() {
+            public void run() {
+                int i = 0;
+                while(i < c){
+                    int vertice_index = ThreadLocalRandom.current().nextInt(1, 7);
+                    dll.updateNode(vertice_index);
+                    i++;
+                    try {
+                        Thread.sleep(30);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 }
