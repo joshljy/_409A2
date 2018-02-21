@@ -5,11 +5,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class star {
+public class Star {
     public static BufferedImage img;
     public static int width = 1920;
     public static int height = 1080;
-    public static doublyLinkedList dll = new doublyLinkedList();
+    public static DoublyLinkedList dll = new DoublyLinkedList();
 
     public static void main(String[] args) {
         try {
@@ -74,7 +74,7 @@ public class star {
             }
         }
     }
-    public void update(int c, doublyLinkedList d){
+    public void update(int c, DoublyLinkedList d){
         int i = 0;
         while(i < c) {
             int vertice_index = ThreadLocalRandom.current().nextInt(1, 7);

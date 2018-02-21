@@ -2,7 +2,7 @@ package Q1;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class doublyLinkedList {
+public class DoublyLinkedList {
     private Node head;
     private Node tail;
 
